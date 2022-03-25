@@ -1,13 +1,27 @@
 import chalk from "chalk";
 import inquirer from "inquirer";
 import figlet from "figlet";
+import random from "random";
+import { randomScenes, repeatableScenes } from "./objects.js";
+// import  from "chalk-animation"
+
+//A promise vai ser resolvida depois do tempo informado em ms (default: 2s)
+const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export function dialog(str) {
   console.log(chalk.bgWhite.black(str));
 }
 
-export function warn(str) {
-  console.log(chalk.bgRed.white(str));
+export function title(str) {
+  console.log(
+    // Forma síncrona do figlet, a assíncrona dava erros
+    figlet.textSync(str, {
+      horizontalLayout: "default",
+      verticalLayout: "default",
+      width: 80,
+      whitespaceBreak: true,
+    })
+  );
 }
 
 export function highlight(str) {
@@ -60,25 +74,51 @@ export async function drawAndGetChoices(Scenes) {
     message: "Qual a sua escolha?",
   });
   const choice = questions.choice;
-
-  // while (!Scenes.hasOwnProperty(choice)) {
-  //   console.log(
-  //     "Essa opção não existe! Sei que está entediado, mas também não fica inventando moda!"
-  //   );
-  //   choice = +prompt("");
-  // }
   return Scenes.find((scene) => {
     return scene.choice === choice;
   });
 }
 
-export function SceneHandler(State, Scenes) {
+export function SceneHandler(State, Scenes, passedScenes = []) {
+  // Se não tem dinheiro a cena não aparece
   Scenes = Scenes.filter(
     (scene) => !scene.hasOwnProperty("money") || State.money - scene.money >= 0
   );
-  if (State.phoneBattery <= 0) {
-    Scenes = Scenes.filter((scene) => !scene.hasOwnProperty("phoneBattery"));
+
+  // Se não tem bateria a cena não aparece
+  Scenes = Scenes.filter(
+    (scene) =>
+      !scene.hasOwnProperty("phoneBattery") ||
+      State.phoneBattery - scene.phoneBattery >= 0
+  );
+
+  //Se a cena já foi mostrada e ela não é repetível ela não aparece
+  Scenes = Scenes.filter(
+    (scene) =>
+      !passedScenes.includes(scene) || repeatableScenes.includes(scene.choice)
+  );
+
+  //Fazer cena randômica
+  const index = Scenes.map((scene) => scene.choice).indexOf(
+    "Olhar as pessoas passando"
+  );
+
+  // Reseta e só troca por chance
+  Scenes[index] = {
+    choice: "Olhar as pessoas passando",
+    onChoice: () =>
+      highlight(
+        "Você só olha o movimento à sua volta... nada acontece. Que chatice."
+      ),
+    time: 5,
+    boredom: 50,
+  };
+
+  let chance = random.int(1, 2);
+  if (chance == 2) {
+    Scenes[index] = randomScenes[random.int(0, 2)];
   }
+
   return Scenes;
 }
 
