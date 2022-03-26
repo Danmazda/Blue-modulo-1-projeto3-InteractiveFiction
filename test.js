@@ -1,9 +1,12 @@
-const objeto = {
-  1: "Escolheu 1",
-  2: "Escolheu 2",
-  3: "Escolheu 3",
-};
+console.log("oi");
+async function pegarTemperatura() {
+  return new Promise(function (resolve, reject) {
+    console.log("Pegando Temperatura...");
 
-const prompt = require("prompt-sync")();
-const escolha = +prompt("Digite sua escolha: 1 , 2 ou 3  ");
-console.log(objeto[escolha]);
+    setTimeout(function () {
+      resolve("40 na sombra");
+    }, 2000);
+  });
+}
+let temp = await pegarTemperatura();
+console.log(temp);
