@@ -15,12 +15,14 @@ export function dialog(str) {
 export function title(str) {
   console.log(
     // Forma síncrona do figlet, a assíncrona dava erros
-    figlet.textSync(str, {
-      horizontalLayout: "default",
-      verticalLayout: "default",
-      width: 80,
-      whitespaceBreak: true,
-    })
+    chalk.red(
+      figlet.textSync(str, {
+        horizontalLayout: "default",
+        verticalLayout: "default",
+        width: 80,
+        whitespaceBreak: true,
+      })
+    )
   );
 }
 
@@ -41,12 +43,14 @@ export function GameWin() {
 }
 
 export function setState(State, Scene) {
-  if (Scene.hasOwnProperty("boredom")) {
-    //Boredom não pode ser menor que 0
-    if ((State.boredom += Scene.boredom >= 0)) {
-      State.boredom += Scene.boredom;
-    }
+  //Boredom não pode ser menor que 0
+  if (Scene.hasOwnProperty("onChoice")) {
+    Scene.onChoice();
   }
+  if (State.boredom + Scene.boredom >= 0) {
+    State.boredom += Scene.boredom;
+  }
+
   if (Scene.hasOwnProperty("time")) {
     State.time += Scene.time;
   }
@@ -55,6 +59,10 @@ export function setState(State, Scene) {
   }
   if (Scene.hasOwnProperty("money")) {
     State.money -= Scene.money;
+  }
+
+  if (Scene.hasOwnProperty("onSecondChoice")) {
+    Scene.onSecondChoice();
   }
   return State;
 }
@@ -74,9 +82,7 @@ export async function drawAndGetChoices(Scenes) {
     message: "Qual a sua escolha?",
   });
   const choice = questions.choice;
-  return Scenes.find((scene) => {
-    return scene.choice === choice;
-  });
+  return Scenes.find((scene) => scene.choice === choice);
 }
 
 export function SceneHandler(State, Scenes, passedScenes = []) {
@@ -98,26 +104,10 @@ export function SceneHandler(State, Scenes, passedScenes = []) {
       !passedScenes.includes(scene) || repeatableScenes.includes(scene.choice)
   );
 
-  //Fazer cena randômica
-  const index = Scenes.map((scene) => scene.choice).indexOf(
-    "Olhar as pessoas passando"
+  //Se a cena foi mostrada duas vezes ela não aparece
+  Scenes = Scenes.filter(
+    (scene) => !scene.hasOwnProperty("counter") || scene.counter <= 1
   );
-
-  // Reseta e só troca por chance
-  Scenes[index] = {
-    choice: "Olhar as pessoas passando",
-    onChoice: () =>
-      highlight(
-        "Você só olha o movimento à sua volta... nada acontece. Que chatice."
-      ),
-    time: 5,
-    boredom: 50,
-  };
-
-  let chance = random.int(1, 2);
-  if (chance == 2) {
-    Scenes[index] = randomScenes[random.int(0, 2)];
-  }
 
   return Scenes;
 }
