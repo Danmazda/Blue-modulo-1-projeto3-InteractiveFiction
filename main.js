@@ -20,6 +20,12 @@ while (res != "N") {
       text: "Você tenta esperar pacientemente, só que para você falta a paciência... Parece que não foi uma boa escolha",
       time: 5,
       boredom: 50,
+      onChoice : function(){
+        let chance = random.int(1, 4);
+        if(chance === 2){
+          // f.sideGame();
+        }
+      }
     },
     {
       choice: "Comprar Café",

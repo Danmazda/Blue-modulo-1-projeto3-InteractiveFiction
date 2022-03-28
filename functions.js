@@ -2,6 +2,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import figlet from "figlet";
 import random from "random";
+import gradient from "gradient-string";
 import { randomScenes, repeatableScenes } from "./objects.js";
 // import  from "chalk-animation"
 
@@ -31,15 +32,23 @@ export function highlight(str) {
 }
 
 export function GameOver() {
-  console.log(chalk.bgRed.black("BOOM! você explodiu de tanto tédio..."));
+  title("BOOM!");
+  console.log(chalk.bgRed.black("você explodiu de tanto tédio..."));
 }
 
 export function GameWin() {
   console.log(
-    chalk.bgGreen.black(
-      "Parabéns! Você conseguiu passar 12 horas sem explodir em pedacinhos!"
+    // Forma síncrona do figlet, a assíncrona dava erros
+    gradient.cristal(
+      figlet.textSync("PARABÉNS!", {
+        horizontalLayout: "default",
+        verticalLayout: "default",
+        width: 80,
+        whitespaceBreak: true,
+      })
     )
   );
+  highlight("Você conseguiu passar 12 horas sem explodir em pedacinhos!");
 }
 
 export function setState(State, Scene) {
