@@ -1,14 +1,10 @@
 import chalk from "chalk";
+import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 import figlet from "figlet";
 import random from "random";
 import gradient from "gradient-string";
-import { randomScenes, repeatableScenes } from "./objects.js";
-// import  from "chalk-animation"
-
-//A promise vai ser resolvida depois do tempo informado em ms (default: 2s)
-const sleep = (ms = 2000) => new Promise((resolve) => setTimeout(resolve, ms));
-
+import { repeatableScenes } from "./objects.js";
 export function dialog(str) {
   console.log(chalk.bgWhite.black(str));
 }
@@ -51,10 +47,10 @@ export function GameWin() {
   highlight("Você conseguiu passar 12 horas sem explodir em pedacinhos!");
 }
 
-export function setState(State, Scene) {
+export async function setState(State, Scene) {
   //Boredom não pode ser menor que 0
   if (Scene.hasOwnProperty("onChoice")) {
-    Scene.onChoice();
+    await Scene.onChoice();
   }
   if (State.boredom + Scene.boredom >= 0) {
     State.boredom += Scene.boredom;
@@ -131,4 +127,37 @@ export async function getRes() {
     },
   });
   return ask.response.trim().toUpperCase().slice(0, 1);
+}
+
+export async function sideGame() {
+  const ask = await inquirer.prompt({
+    name: "r",
+    type: "list",
+    choices: ["Sim", "Não"],
+    message: dialog(
+      "Um estranho te vê esperando e chega perto, ele oferece uma carona até São Paulo. Você aceita?"
+    ),
+  });
+  if (ask.r === "Sim") {
+    let chance = random.int(1, 2);
+    if (chance === 1) {
+      return {
+        text: "Você aceita a corrida, entra no carro preto do homem, ele adentra um matagal que você nunca tinha visto, você fica apreensivo, o homem fica calado, o caminho parece um portal mágico porque em menos de uma hora vocês estão em São Paulo, que sorte!",
+        time: 120,
+        boredom: 0,
+      };
+    } else {
+      return {
+        text: "Você aceita a corrida, entra no carro preto do homem, ele adentra um matagal que você nunca tinha visto, você fica apreensivo, o homem fica calado, no meio do mato o pneu estoura, o homem xinga, e para o carro pra trocar o pneu 'Vai ser rapidinho' ele diz, mas não foi nada rápido já se passaram três horas e você não vai aguentar...",
+        time: 0,
+        boredom: 100,
+      };
+    }
+  } else {
+    return {
+      text: "Você não aceita e o estranho segue sua vida.",
+      time: 10,
+      boredom: 0,
+    };
+  }
 }

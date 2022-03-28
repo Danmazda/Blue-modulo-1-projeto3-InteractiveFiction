@@ -17,15 +17,20 @@ while (res != "N") {
   let Scenes = [
     {
       choice: "Esperar pacientemente",
-      text: "Você tenta esperar pacientemente, só que para você falta a paciência... Parece que não foi uma boa escolha",
-      time: 5,
-      boredom: 50,
-      onChoice : function(){
+      onChoice: async function () {
+        this.text =
+          "Você tenta esperar pacientemente, só que para você falta a paciência... Parece que não foi uma boa escolha";
+        this.time = 5;
+        this.boredom = 50;
         let chance = random.int(1, 4);
-        if(chance === 2){
-          // f.sideGame();
+        if (chance === 2) {
+          const scene = await f.sideGame();
+          const { text, time, boredom } = scene;
+          this.text = text;
+          this.time = time;
+          this.boredom = boredom;
         }
-      }
+      },
     },
     {
       choice: "Comprar Café",
@@ -88,7 +93,7 @@ while (res != "N") {
     {
       choice: "Olhar as pessoas passando",
       onChoice() {
-        let chance = random.int(1, 7);
+        let chance = random.int(1, 9);
         if (chance == 1) {
           this.text =
             "Você olha as pessoas passando... e vê um grande alvoroço se formando numa catraca, dois motoristas trocam socos e chutes enquanto um pessoal tenta separá-los, treta para os outros entretenimento pra você.";
@@ -159,7 +164,7 @@ while (res != "N") {
     Scenes = f.SceneHandler(State, Scenes, passedScenes);
     // Cena escolhida
     const choice = await f.drawAndGetChoices(Scenes);
-    f.setState(State, choice);
+    await f.setState(State, choice);
     highlight(choice.text);
     passedScenes.push(choice);
     if (State.boredom >= 100) {
