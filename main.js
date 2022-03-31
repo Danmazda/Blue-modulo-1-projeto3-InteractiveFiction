@@ -1,9 +1,7 @@
 import * as f from "./functions.js";
 import { highlight } from "./functions.js";
 import * as ob from "./objects.js";
-
 // * Pode Rodar esse arquivo com npm start
-
 f.title("DON'T BORE YOURSELF TO DEATH");
 let res;
 //Se quiser jogar de novo o jogo reseta
@@ -39,5 +37,3 @@ while (res != "N") {
 
   res = await f.getRes();
 }
-
-//Funções do jogo

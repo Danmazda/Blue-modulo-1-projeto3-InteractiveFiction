@@ -85,7 +85,7 @@ export async function drawAndGetChoices(Scenes) {
     choices: choices,
     message: "Qual a sua escolha?",
   });
-  const choice = questions.choice;
+  const { choice } = questions;
   return Scenes.find((scene) => scene.choice === choice);
 }
 
