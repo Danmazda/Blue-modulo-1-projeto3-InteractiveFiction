@@ -3,7 +3,6 @@ import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 import figlet from "figlet";
 import random from "random";
-import gradient from "gradient-string";
 import { repeatableScenes } from "./objects.js";
 export function dialog(str) {
   console.log(chalk.bgWhite.black(str));
@@ -35,7 +34,7 @@ export function GameOver() {
 export function GameWin() {
   console.log(
     // Forma síncrona do figlet, a assíncrona dava erros
-    gradient.cristal(
+    chalk.blue(
       figlet.textSync("PARABÉNS!", {
         horizontalLayout: "default",
         verticalLayout: "default",
