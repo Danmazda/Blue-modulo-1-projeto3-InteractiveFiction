@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 import figlet from "figlet";
 import random from "random";
 import { repeatableScenes } from "./objects.js";
+
 export function dialog(str) {
   console.log(chalk.bgWhite.black(str));
 }
@@ -26,9 +26,13 @@ export function highlight(str) {
   console.log(chalk.bgGreen.black(str));
 }
 
-export function GameOver() {
+export function GameOver(bathroom = false) {
   title("BOOM!");
-  console.log(chalk.bgRed.black("você explodiu de tanto tédio..."));
+  if (bathroom) {
+    console.log(chalk.bgRed.black("você não foi ao banheiro D:"));
+  } else {
+    console.log(chalk.bgRed.black("você explodiu de tanto tédio..."));
+  }
 }
 
 export function GameWin() {
@@ -43,13 +47,17 @@ export function GameWin() {
       })
     )
   );
-  highlight("Você conseguiu passar 12 horas sem explodir em pedacinhos!");
+  console.log(
+    chalk.bgGreen.black(
+      "Você conseguiu passar 12 horas sem explodir em pedacinhos!"
+    )
+  );
 }
 
-export async function setState(State, Scene) {
+export async function setState(State, Scene, passedScenes) {
   //Boredom não pode ser menor que 0
   if (Scene.hasOwnProperty("onChoice")) {
-    await Scene.onChoice();
+    await Scene.onChoice(State.bathroom);
   }
   if (State.boredom + Scene.boredom >= 0) {
     State.boredom += Scene.boredom;
@@ -68,7 +76,15 @@ export async function setState(State, Scene) {
   if (Scene.hasOwnProperty("onSecondChoice")) {
     Scene.onSecondChoice();
   }
-  return State;
+
+  if (Scene.hasOwnProperty("bathroom")) {
+    State.bathroom = true;
+  }
+  if (passedScenes.length > 0) {
+    if (passedScenes[passedScenes.length - 1].choice === "Ir ao banheiro") {
+      State.bathroom = false;
+    }
+  }
 }
 
 // Decisões

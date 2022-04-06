@@ -1,10 +1,12 @@
 import random from "random";
+import { sideGame } from "./functions.js";
 
 export const State = {
   boredom: 0,
   time: 0,
   money: 30,
   phoneBattery: 100,
+  bathroom: false,
 };
 
 export const Scenes = [
@@ -17,7 +19,7 @@ export const Scenes = [
       this.boredom = 50;
       let chance = random.int(1, 4);
       if (chance === 2) {
-        const scene = await f.sideGame();
+        const scene = await sideGame();
         const { text, time, boredom } = scene;
         this.text = text;
         this.time = time;
@@ -37,9 +39,10 @@ export const Scenes = [
     },
     onSecondChoice: function () {
       if (this.counter > 1) {
-        this.text = `Você gasta mais do seu dinheiro pra tomar mais café. Vício talvez? agora você está eletrizado!`;
+        this.text = `Você gasta mais do seu dinheiro pra tomar mais café. Vício talvez? agora você ficou apertado e precisa ir no banheiro!`;
         this.time = 10;
         this.boredom = -25;
+        this.bathroom = true;
       }
     },
   },
@@ -56,25 +59,31 @@ export const Scenes = [
     onSecondChoice: function () {
       if (this.counter > 1) {
         this.text = `Você gasta de novo com outra revista, dessa vez fala sobre esportes... que você não tem o menor interese, "A nova sensação do cricket", dinheiro jogado fora.`;
-        (this.boredom = 30), (this.time = 10);
+        this.boredom = 30;
+        this.time = 10;
       }
     },
   },
   {
     choice: "Comprar Lanche",
-    text: "Você compra uma coxinha que estava deliciosa, mas não durou muito, pelo menos está de barriga cheia",
+    text: "Você compra uma coxinha que estava deliciosa, mas não durou muito, pelo menos está de barriga cheia... e estranha, aparentemente a coxinha estava estragada, e você sente uma vontade urgente de ir ao banheiro!",
     money: 10,
     boredom: -10,
     time: +10,
+    bathroom: true,
   },
   {
     choice: "Ir ao banheiro",
     counter: 0,
-    text: `Você vai ao banheiro, mesmo sem vontade, meio estranho, mas ok, o banheiro está bem sujo e fedido você não consegue ficar lá por muito tempo.`,
     time: 5,
     boredom: -5,
-    onChoice: function () {
-      this.counter++;
+    onChoice: function (bathroom = false) {
+      if (bathroom) {
+        this.text = `Você vai correndo pro banheiro se aliviar... Ufa essa foi por pouco.`;
+      } else {
+        this.text = `Você vai ao banheiro, mesmo sem vontade, meio estranho, mas ok, o banheiro está bem sujo e fedido você não consegue ficar lá por muito tempo.`;
+        this.counter++;
+      }
     },
     onSecondChoice: function () {
       if (this.counter > 1) {
