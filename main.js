@@ -1,5 +1,4 @@
 import * as f from "./functions.js";
-import { highlight } from "./functions.js";
 import * as ob from "./objects.js";
 // * Pode Rodar esse arquivo com npm start
 f.title("DON'T BORE YOURSELF TO DEATH");
@@ -25,7 +24,9 @@ while (res != "N") {
     }
     passedScenes.push(choice);
     await f.setState(State, choice, passedScenes);
-    highlight(choice.text);
+    f.highlight(choice.text);
+    State.boredom += 10;
+    State.time += 10;
     if (State.boredom >= 100) {
       f.GameOver();
       break;
@@ -33,9 +34,6 @@ while (res != "N") {
     if (State.time > 120) {
       f.GameWin();
     }
-    State.boredom += 10;
-    State.time += 10;
   } while (State.time <= 120);
-
   res = await f.getRes();
 }

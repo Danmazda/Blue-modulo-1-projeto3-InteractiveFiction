@@ -120,7 +120,7 @@ export const Scenes = [
     },
   },
   {
-    choice: "Pegar transporte pirata.",
+    choice: "Pegar transporte pirata",
     text: "Você percebe que tem um tranporte pirata e sem pensar duas vezes pega ele ",
     money: 30,
     onChoice: function () {
